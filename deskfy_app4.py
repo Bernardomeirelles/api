@@ -57,6 +57,13 @@ ORDEM_FORMULARIO = [
     "briefing.design_ou_impressao_(casos_de_apenas_impressao_tambem_precisam_estar_de_acordo_com_nossos_guidelines)",
     "briefing.marca_foco",
     "briefing.embalagens_na_capa_(selecione_quantas_quiser)",
+    "briefing.encadernacao",
+    "solicitacao.codigo",
+    "solicitacao.dt_cadastro",
+    "solicitacao.status",
+    "solicitacao.solicitante",
+    "solicitacao.formulario",
+    "anexos",
     *["briefing." + campo for campo in CAMPOS_BEBIDAS]
 ]
 
