@@ -15,4 +15,4 @@ RUN pip install -r requirements.txt
 EXPOSE 8501
 
 # Comando para rodar seu app
-CMD ["streamlit", "run", "deskfy_app.py", "--server.port=8501", "--server.enableCORS=false"]
+CMD ["streamlit", "run", "deskfy_app4.py", "--server.port=8501", "--server.enableCORS=false"]
