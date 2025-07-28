@@ -43,7 +43,9 @@ CAMPOS_BEBIDAS = [
     "guarana_antarctica_lata", "guarana_antarctica_zero_lata", "pepsi_lata", "pepsi_black_lata",
     "tonica_antarctica_lata", "coca_cola_lata", "red_bull", "gatorade_500ml", "h20h_500ml",
     "guarana_antarctica_1l", "guarana_antarctica_zero_1l", "pepsi_1l", "pepsi_black_1l",
-    "coca_cola_1l", "coca_cola_zero_1l"
+    "coca_cola_1l", "coca_cola_zero_1l","briefing.o_pdv_deseja_fazer_alteracoes_nas_secoes_de_comida?_se_sim,_digite_aqui.",
+    "briefing.os_itens_novos_do_cardapio_tem_codigo?_se_sim,_digite_aqui.",
+    "briefing.outros_produtos_nao_listados_(digitar_marca_e_preco)",
 ]
 
 ORDEM_FORMULARIO = [
@@ -61,9 +63,6 @@ ORDEM_FORMULARIO = [
     "briefing.design_ou_impressao_(casos_de_apenas_impressao_tambem_precisam_estar_de_acordo_com_nossos_guidelines)",
     "briefing.marca_foco",
     "briefing.embalagens_na_capa_(selecione_quantas_quiser)",
-    "briefing.o_pdv_deseja_fazer_alteracoes_nas_secoes_de_comida?_se_sim,_digite_aqui.",
-    "briefing.os_itens_novos_do_cardapio_tem_codigo?_se_sim,_digite_aqui.",
-    "briefing.outros_produtos_nao_listados_(digitar_marca_e_preco)",
     *["briefing." + campo for campo in CAMPOS_BEBIDAS]
 ]
 
