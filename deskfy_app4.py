@@ -43,7 +43,9 @@ CAMPOS_BEBIDAS = [
     "guarana_antarctica_lata", "guarana_antarctica_zero_lata", "pepsi_lata", "pepsi_black_lata",
     "tonica_antarctica_lata", "coca_cola_lata", "red_bull", "gatorade_500ml", "h20h_500ml",
     "guarana_antarctica_1l", "guarana_antarctica_zero_1l", "pepsi_1l", "pepsi_black_1l",
-    "coca_cola_1l", "coca_cola_zero_1l","briefing.o_pdv_deseja_fazer_alteracoes_nas_secoes_de_comida?_se_sim,_digite_aqui.",
+    "coca_cola_1l", "coca_cola_zero_1l",
+    ##3 campos abaixo que estão depois das bebidas no formulário original e aparecem depois das bebidas.... mas são strings
+    "briefing.o_pdv_deseja_fazer_alteracoes_nas_secoes_de_comida?_se_sim,_digite_aqui.",
     "briefing.os_itens_novos_do_cardapio_tem_codigo?_se_sim,_digite_aqui.",
     "briefing.outros_produtos_nao_listados_(digitar_marca_e_preco)",
 ]
