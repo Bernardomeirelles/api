@@ -1,3 +1,8 @@
+
+
+## -------------------------------------------------------------------------------------------------------
+
+
 # requirements.txt:
 # streamlit
 # pandas
@@ -15,16 +20,6 @@ import hashlib
 
 st.set_page_config(page_title="Deskfy API - Exportação", layout="centered")
 st.title("Deskfy API - Consulta e Exportação")
-
-# --- Sidebar com API Key ---
-with st.sidebar:
-    st.header("Credenciais e Configuração")
-    st.session_state.api_key = "47200d78-1f10-44ba-a8e4-187a7d35e3bd"
-    st.markdown(":white_check_mark: API Key carregada com sucesso.")
-
-# --- Sessão para salvar consultas detalhadas ---
-if "consultas_salvas" not in st.session_state:
-    st.session_state.consultas_salvas = {}
 
 # --- Campos esperados ---
 CAMPOS_BEBIDAS = [
@@ -44,7 +39,6 @@ CAMPOS_BEBIDAS = [
     "tonica_antarctica_lata", "coca_cola_lata", "red_bull", "gatorade_500ml", "h20h_500ml",
     "guarana_antarctica_1l", "guarana_antarctica_zero_1l", "pepsi_1l", "pepsi_black_1l",
     "coca_cola_1l", "coca_cola_zero_1l",
-    ##3 campos abaixo que estão depois das bebidas no formulário original e aparecem depois das bebidas.... mas são strings
     "briefing.o_pdv_deseja_fazer_alteracoes_nas_secoes_de_comida?_se_sim,_digite_aqui.",
     "briefing.os_itens_novos_do_cardapio_tem_codigo?_se_sim,_digite_aqui.",
     "briefing.outros_produtos_nao_listados_(digitar_marca_e_preco)",
@@ -68,6 +62,44 @@ ORDEM_FORMULARIO = [
     *["briefing." + campo for campo in CAMPOS_BEBIDAS]
 ]
 
+# --- Sidebar com CSS e Navegação ---
+with st.sidebar:
+    st.markdown("""
+    <style>
+    [data-testid="stSidebar"] {
+        min-width: 350px;
+        width: 350px;
+    }
+    [data-testid="stSidebar"] .css-1wvake5 {
+        white-space: normal;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: black !important;
+        color: white !important;
+    }
+    ul[role="listbox"] > li {
+        background-color: white !important;
+        color: black !important;
+    }
+    ul[role="listbox"] > li[aria-selected="true"] {
+        background-color: black !important;
+        color: white !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.header("Credenciais e Configuração")
+    st.session_state.api_key = "47200d78-1f10-44ba-a8e4-187a7d35e3bd"
+    st.success("✅ API Key carregada com sucesso.")
+    st.text_input("🔐 API Key (visualização)", value=st.session_state.api_key, disabled=True)
+    st.caption("A chave acima está em uso e não pode ser editada.")
+    pagina = st.selectbox("📄 Escolha a funcionalidade:", ["Cardápios Solicitados", "Outros Relatórios"])
+
+# --- Sessão para salvar consultas detalhadas ---
+if "consultas_salvas" not in st.session_state:
+    st.session_state.consultas_salvas = {}
+
+# --- Funções auxiliares ---
 def dict_flatten(d, prefix=''):
     out = {}
     for k, v in d.items():
@@ -107,11 +139,61 @@ def salvar_consulta(task_id, linha):
     if task_id not in st.session_state.consultas_salvas or st.session_state.consultas_salvas[task_id]['hash'] != hash_atual:
         st.session_state.consultas_salvas[task_id] = {"hash": hash_atual, "dados": linha}
 
-# --- Interface ---
-opcao = st.radio("Selecione a operação:", ["Consultar Relatórios", "Consultar Detalhes da Solicitação"])
+# === Página: Cardápios Solicitados ===
+if pagina == "Cardápios Solicitados":
+    st.subheader("Detalhes da Solicitação")
+    task_id = st.text_input("Task ID da Solicitação")
 
-if opcao == "Consultar Relatórios":
-    st.subheader("Parâmetros da Consulta")
+    if st.button("Consultar Detalhes"):
+        with st.spinner("Buscando dados da solicitação..."):
+            if not (st.session_state.api_key and task_id):
+                st.warning("Preencha a API Key e o Task ID.")
+            else:
+                url = "https://service-api.deskfy.io/v1/reports/workflow/task-details"
+                response = requests.get(url, headers={"x-api-key": st.session_state.api_key}, params={"taskId": task_id})
+
+                if response.status_code == 200:
+                    data = response.json()
+                    st.success("Dados carregados com sucesso.")
+
+                    linha = dict_flatten(data)
+                    if "solicitacao.id" in linha:
+                        linha["link_deskfy"] = f"https://app.deskfy.io/task/{linha['solicitacao.id']}"
+
+                    salvar_consulta(task_id, linha)
+
+                    valores_ordenados = [str(linha.get(campo, "")) for campo in ORDEM_FORMULARIO]
+                    cabecalhos_legiveis = [campo.replace("briefing.", "").replace("_", " ").capitalize() for campo in ORDEM_FORMULARIO]
+
+                    df_exibicao = pd.DataFrame([valores_ordenados], columns=cabecalhos_legiveis)
+                    st.dataframe(df_exibicao)
+
+                    output = BytesIO()
+                    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+                        df_exibicao.to_excel(writer, index=False, sheet_name="Detalhes")
+                        formatar_excel(writer, "Detalhes")
+                    output.seek(0)
+
+                    st.download_button("📥 Baixar Excel da Solicitação", data=output, file_name=f"detalhes_{linha.get('solicitacao.codigo', task_id)}.xlsx")
+
+                    exibir_tabela_formatada(linha)
+
+                    df_export = pd.DataFrame([valores_ordenados], columns=cabecalhos_legiveis)
+                    csv_bytes = df_export.to_csv(index=False, sep=";", encoding="utf-8").encode("utf-8")
+                    st.download_button("📅 Baixar CSV da Solicitação", data=csv_bytes, file_name=f"detalhes_{linha.get('solicitacao.codigo', task_id)}.csv", mime="text/csv")
+                else:
+                    st.error(f"Erro Deskfy {response.status_code}: {response.text}")
+
+    if st.button("Ver Histórico de Consultas"):
+        st.markdown(f"### Total de Consultas: {len(st.session_state.consultas_salvas)}")
+        for tid, entry in st.session_state.consultas_salvas.items():
+            with st.expander(f"🔎 {tid}"):
+                exibir_tabela_formatada(entry["dados"])
+                st.code(json.dumps(entry["dados"], indent=2, ensure_ascii=False), language="json")
+
+# === Página: Outros Relatórios ===
+if pagina == "Outros Relatórios":
+    st.header("📊 Consultar Relatórios")
     col1, col2 = st.columns(2)
     with col1:
         initial_date = st.date_input("Data Inicial")
@@ -155,64 +237,7 @@ if opcao == "Consultar Relatórios":
                             formatar_excel(writer, "Relatório")
                         output_excel.seek(0)
 
-                        st.download_button("Baixar Excel", data=output_excel, file_name="relatorio_deskfy.xlsx")
-                        st.download_button("Baixar CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="relatorio_deskfy.csv")
+                        st.download_button("📥 Baixar Excel", data=output_excel, file_name="relatorio_deskfy.xlsx")
+                        st.download_button("📄 Baixar CSV", data=df.to_csv(index=False).encode("utf-8"), file_name="relatorio_deskfy.csv")
                 else:
                     st.error(f"Erro {response.status_code}: {response.text}")
-
-if opcao == "Consultar Detalhes da Solicitação":
-    st.subheader("Detalhes da Solicitação")
-    task_id = st.text_input("Task ID da Solicitação")
-
-    if st.button("Consultar Detalhes"):
-        with st.spinner("Buscando dados da solicitação..."):
-            if not (st.session_state.api_key and task_id):
-                st.warning("Preencha a API Key e o Task ID.")
-            else:
-                url = "https://service-api.deskfy.io/v1/reports/workflow/task-details"
-                response = requests.get(url, headers={"x-api-key": st.session_state.api_key}, params={"taskId": task_id})
-
-                if response.status_code == 200:
-                    data = response.json()
-                    st.success("Dados carregados com sucesso.")
-
-                    linha = dict_flatten(data)
-                    if "solicitacao.id" in linha:
-                        linha["link_deskfy"] = f"https://app.deskfy.io/task/{linha['solicitacao.id']}"
-
-                    salvar_consulta(task_id, linha)
-
-                    df = pd.DataFrame([linha])
-                    st.dataframe(df)
-
-                    output = BytesIO()
-                    with pd.ExcelWriter(output, engine="openpyxl") as writer:
-                        df.to_excel(writer, index=False, sheet_name="Detalhes")
-                        formatar_excel(writer, "Detalhes")
-                    output.seek(0)
-
-                    st.download_button("Baixar Excel da Solicitação", data=output, file_name=f"detalhes_{linha.get('solicitacao.codigo', task_id)}.xlsx")
-                    exibir_tabela_formatada(linha)
-
-                    # Exportar como CSV legível/copiar
-                    valores_ordenados = [str(linha.get(campo, "")) for campo in ORDEM_FORMULARIO]
-                    cabecalhos_legiveis = [campo.replace("briefing.", "").replace("_", " ").capitalize() for campo in ORDEM_FORMULARIO]
-
-                    st.markdown("### 📋 Copiar como CSV (com vírgula)")
-                    st.code(",".join(cabecalhos_legiveis) + "\n" + ",".join(valores_ordenados), language="csv")
-
-                    st.markdown("### 📋 Copiar como CSV (com ponto e vírgula)")
-                    st.code(";".join(cabecalhos_legiveis) + "\n" + ";".join(valores_ordenados), language="csv")
-
-                    df_export = pd.DataFrame([valores_ordenados], columns=cabecalhos_legiveis)
-                    csv_bytes = df_export.to_csv(index=False, sep=";", encoding="utf-8").encode("utf-8")
-                    st.download_button("📅 Baixar CSV da Solicitação", data=csv_bytes, file_name=f"detalhes_{linha.get('solicitacao.codigo', task_id)}.csv", mime="text/csv")
-                else:
-                    st.error(f"Erro Deskfy {response.status_code}: {response.text}")
-
-if st.button("Ver Histórico de Consultas"):
-    st.markdown(f"### Total de Consultas: {len(st.session_state.consultas_salvas)}")
-    for tid, entry in st.session_state.consultas_salvas.items():
-        with st.expander(f"🔎 {tid}"):
-            exibir_tabela_formatada(entry["dados"])
-            st.code(json.dumps(entry["dados"], indent=2, ensure_ascii=False), language="json")
