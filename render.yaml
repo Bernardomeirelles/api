@@ -1,0 +1,5 @@
+
+build:
+  environment:
+    pythonVersion: 3.11.8
+  command: pip install -r requirements.txt
