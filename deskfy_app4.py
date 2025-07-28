@@ -62,7 +62,10 @@ ORDEM_FORMULARIO = [
     "solicitacao.dt_cadastro",
     "solicitacao.status",
     "solicitacao.solicitante",
+    "solicitacao.idbriefing",
     "solicitacao.formulario",
+    "solicitacao.companyId",
+    "solicitacao.dt_preventrega",
     "anexos",
     *["briefing." + campo for campo in CAMPOS_BEBIDAS]
 ]
