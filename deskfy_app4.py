@@ -38,10 +38,8 @@ CAMPOS_BEBIDAS = [
     "guarana_antarctica_lata", "guarana_antarctica_zero_lata", "pepsi_lata", "pepsi_black_lata",
     "tonica_antarctica_lata", "coca_cola_lata", "red_bull", "gatorade_500ml", "h20h_500ml",
     "guarana_antarctica_1l", "guarana_antarctica_zero_1l", "pepsi_1l", "pepsi_black_1l",
-    "coca_cola_1l", "coca_cola_zero_1l",
-    "briefing.o_pdv_deseja_fazer_alteracoes_nas_secoes_de_comida?_se_sim,_digite_aqui.",
-    "briefing.os_itens_novos_do_cardapio_tem_codigo?_se_sim,_digite_aqui.",
-    "briefing.outros_produtos_nao_listados_(digitar_marca_e_preco)",
+    "coca_cola_1l", "coca_cola_zero_1l","o_pdv_deseja_fazer_alteracoes_nas_secoes_de_comida?_se_sim,_digite_aqui.",
+    "os_itens_novos_do_cardapio_tem_codigo?_se_sim,_digite_aqui.","outros_produtos_nao_listados_(digitar_marca_e_preco)"
 ]
 
 ORDEM_FORMULARIO = [
@@ -162,25 +160,37 @@ if pagina == "Cardápios Solicitados":
 
                     salvar_consulta(task_id, linha)
 
+                    # Coleta os valores conforme a ordem definida
                     valores_ordenados = [str(linha.get(campo, "")) for campo in ORDEM_FORMULARIO]
+
+                    # Converte os nomes dos campos para cabeçalhos legíveis
                     cabecalhos_legiveis = [campo.replace("briefing.", "").replace("_", " ").capitalize() for campo in ORDEM_FORMULARIO]
 
+                    # Cria DataFrame apenas com os campos da ORDEM_FORMULARIO (incluindo bebidas)
                     df_exibicao = pd.DataFrame([valores_ordenados], columns=cabecalhos_legiveis)
+
+                    # Mostra na interface do app
                     st.dataframe(df_exibicao)
 
+                    # Exporta para Excel com apenas os campos esperados
                     output = BytesIO()
                     with pd.ExcelWriter(output, engine="openpyxl") as writer:
                         df_exibicao.to_excel(writer, index=False, sheet_name="Detalhes")
                         formatar_excel(writer, "Detalhes")
                     output.seek(0)
 
-                    st.download_button("📥 Baixar Excel da Solicitação", data=output, file_name=f"detalhes_{linha.get('solicitacao.codigo', task_id)}.xlsx")
+                    # Botão para download
+                    st.download_button(
+                        "📥 Baixar Excel da Solicitação",
+                        data=output,
+                        file_name=f"detalhes_{linha.get('solicitacao.codigo', task_id)}.xlsx"
+                    )
+
 
                     exibir_tabela_formatada(linha)
 
                     df_export = pd.DataFrame([valores_ordenados], columns=cabecalhos_legiveis)
-                    csv_bytes = df_export.to_csv(index=False, sep=";", encoding="utf-8").encode("utf-8")
-                    st.download_button("📅 Baixar CSV da Solicitação", data=csv_bytes, file_name=f"detalhes_{linha.get('solicitacao.codigo', task_id)}.csv", mime="text/csv")
+                   
                 else:
                     st.error(f"Erro Deskfy {response.status_code}: {response.text}")
 
