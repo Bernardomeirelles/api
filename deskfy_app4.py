@@ -46,18 +46,27 @@ ORDEM_FORMULARIO = [
     "briefing.unb", "briefing.sala", "briefing.setor", "briefing.codigo_pdv", "briefing.nome_pdv",
     "briefing.o_pdv_ja_tem_cardapio?",
     "briefing.o_que_foi_negociado_com_o_pdv?_e_possivel_selecionar_os_dois.",
+    "briefing.design_ou_impressao_(casos_de_apenas_impressao_tambem_precisam_estar_de_acordo_com_nossos_guidelines)",
     "briefing.trabalho_a_ser_feito",
     "briefing.tipo_de_cardapio",
-    "briefing.ja_produzimos_esse_cardapio_antes?",
-    "briefing.vip/premium",
+    ### IGUAL
+
+    #SÓ NO PERSONALIZADO
+    "briefing.ja_produzimos_esse_cardapio_antes?", #APARIÇÃO 1 PERSONALIZADO - NO PADRAO APARECEM ERRADO   
+    "briefing.vip/premium",#APARIÇÃO 1 PERSONALIZADO    - NO PADRÃO APARECEM ERRADO
+
+    
+    "briefing.embalagens_na_capa_(selecione_quantas_quiser)",#SÓ NO PADRÃO
     "briefing.material",
     "briefing.folha_(no_minimo_2_folhas_para_encadernar;_nao_e_possivel_encadernar_placa_ps)",
+    "briefing.encadernacao",#SÓ NO PADRÃO
     "briefing.medidas_(largura_x_altura)",
     "briefing.copias",
-    "briefing.design_ou_impressao_(casos_de_apenas_impressao_tambem_precisam_estar_de_acordo_com_nossos_guidelines)",
-    "briefing.marca_foco",
-    "briefing.embalagens_na_capa_(selecione_quantas_quiser)",
-    "briefing.encadernacao",
+    "briefing.design_ou_impressao", #SÓ NO PERSONALIZADO
+    "briefing.marca_foco_(marca_em_negrito_no_topo_de_secao_de_cerveja)",#SÓ NO PERSONALIZADO
+    "briefing.incluir_imagem_de_alguma_marca_(cerveja,_nab_ou_match)?_liste_as_embalagens." #SÓ NO PERSONALIZADO
+    "briefing.ja_produzimos_esse_cardapio_antes?", # 0002 aparece denovo no depois no padrão - REPETIDO NO PERSONALIZADO
+    #DADOS DE SOLICITAÇÕES
     "solicitacao.codigo",
     "solicitacao.dt_cadastro",
     "solicitacao.status",
