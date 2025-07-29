@@ -64,7 +64,7 @@ ORDEM_FORMULARIO = [
     "briefing.copias",
     "briefing.design_ou_impressao", #SÓ NO PERSONALIZADO
     "briefing.marca_foco_(marca_em_negrito_no_topo_de_secao_de_cerveja)",#SÓ NO PERSONALIZADO
-    "briefing.incluir_imagem_de_alguma_marca_(cerveja,_nab_ou_match)?_liste_as_embalagens." #SÓ NO PERSONALIZADO
+    "briefing.incluir_imagem_de_alguma_marca_(cerveja,_nab_ou_match)?_liste_as_embalagens.", #SÓ NO PERSONALIZADO
     "briefing.ja_produzimos_esse_cardapio_antes?", # 0002 aparece denovo no depois no padrão - REPETIDO NO PERSONALIZADO
     #DADOS DE SOLICITAÇÕES
     "solicitacao.codigo",
