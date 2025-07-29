@@ -43,41 +43,53 @@ CAMPOS_BEBIDAS = [
 ]
 
 ORDEM_FORMULARIO = [
-    "briefing.unb", "briefing.sala", "briefing.setor", "briefing.codigo_pdv", "briefing.nome_pdv",
-    "briefing.o_pdv_ja_tem_cardapio?",
-    "briefing.o_que_foi_negociado_com_o_pdv?_e_possivel_selecionar_os_dois.",
-    "briefing.design_ou_impressao_(casos_de_apenas_impressao_tambem_precisam_estar_de_acordo_com_nossos_guidelines)",
-    "briefing.trabalho_a_ser_feito",
-    "briefing.tipo_de_cardapio",
-    ### IGUAL
+    # --- Bloco de identificação do PDV ---
+    "briefing.unb",  # OK
+    "briefing.sala",  # OK
+    "briefing.setor",  # OK
+    "briefing.codigo_pdv",  # OK
+    "briefing.nome_pdv",  # OK
 
-    #SÓ NO PERSONALIZADO
-    "briefing.ja_produzimos_esse_cardapio_antes?", #APARIÇÃO 1 PERSONALIZADO - NO PADRAO APARECEM ERRADO   
-    "briefing.vip/premium",#APARIÇÃO 1 PERSONALIZADO    - NO PADRÃO APARECEM ERRADO
+    # --- Bloco de status e negociação ---
+    "briefing.o_pdv_ja_tem_cardapio?",  # OK
+    "briefing.o_que_foi_negociado_com_o_pdv?_e_possivel_selecionar_os_dois.",  # OK
+    "briefing.design_ou_impressao_(casos_de_apenas_impressao_tambem_precisam_estar_de_acordo_com_nossos_guidelines)",  # OK
+    "briefing.trabalho_a_ser_feito",  # OK
+    "briefing.tipo_de_cardapio",  # OK
 
-    
-    "briefing.embalagens_na_capa_(selecione_quantas_quiser)",#SÓ NO PADRÃO
-    "briefing.material",
-    "briefing.folha_(no_minimo_2_folhas_para_encadernar;_nao_e_possivel_encadernar_placa_ps)",
-    "briefing.encadernacao",#SÓ NO PADRÃO
-    "briefing.medidas_(largura_x_altura)",
-    "briefing.copias",
-    "briefing.design_ou_impressao", #SÓ NO PERSONALIZADO
-    "briefing.marca_foco_(marca_em_negrito_no_topo_de_secao_de_cerveja)",#SÓ NO PERSONALIZADO
-    "briefing.incluir_imagem_de_alguma_marca_(cerveja,_nab_ou_match)?_liste_as_embalagens.", #SÓ NO PERSONALIZADO
-    "briefing.ja_produzimos_esse_cardapio_antes?", # 0002 aparece denovo no depois no padrão - REPETIDO NO PERSONALIZADO
-    #DADOS DE SOLICITAÇÕES
-    "solicitacao.codigo",
-    "solicitacao.dt_cadastro",
-    "solicitacao.status",
-    "solicitacao.solicitante",
-    "solicitacao.idbriefing",
-    "solicitacao.formulario",
-    "solicitacao.companyId",
-    "solicitacao.dt_preventrega",
-    "anexos",
-    *["briefing." + campo for campo in CAMPOS_BEBIDAS]
+    # --- Exclusivos do formulário personalizado ---
+    "briefing.ja_produzimos_esse_cardapio_antes?",  # ⚠️ DUPLICADA — aparece novamente mais abaixo
+    "briefing.vip/premium",  # OK
+
+    # --- Exclusivos do formulário padrão ---
+    "briefing.embalagens_na_capa_(selecione_quantas_quiser)",  # OK
+    "briefing.material",  # OK
+    "briefing.folha_(no_minimo_2_folhas_para_encadernar;_nao_e_possivel_encadernar_placa_ps)",  # OK
+    "briefing.encadernacao",  # OK
+    "briefing.medidas_(largura_x_altura)",  # OK
+    "briefing.copias",  # OK
+
+    # --- Só aparece no personalizado ---
+    "briefing.design_ou_impressao",  # OK
+    "briefing.marca_foco_(marca_em_negrito_no_topo_de_secao_de_cerveja)",  # OK
+    "briefing.incluir_imagem_de_alguma_marca_(cerveja,_nab_ou_match)?_liste_as_embalagens.",  # OK
+
+
+    # --- Dados técnicos da solicitação Deskfy ---
+    "solicitacao.codigo",  # OK
+    "solicitacao.dt_cadastro",  # OK
+    "solicitacao.status",  # OK
+    "solicitacao.solicitante",  # OK
+    "solicitacao.idbriefing",  # OK
+    "solicitacao.formulario",  # OK
+    "solicitacao.companyId",  # OK
+    "solicitacao.dt_preventrega",  # OK
+    "anexos",  # OK
+
+    # --- Campos de bebidas vindos de CAMPOS_BEBIDAS ---
+    *["briefing." + campo for campo in CAMPOS_BEBIDAS]  # OK (gera muitos campos únicos com prefixo)
 ]
+
 
 # --- Sidebar com CSS e Navegação ---
 with st.sidebar:
